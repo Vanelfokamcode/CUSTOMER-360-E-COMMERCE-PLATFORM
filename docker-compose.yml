@@ -1,0 +1,53 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # PostgreSQL = notre Data Warehouse
+  postgres:
+    image: postgres:15-alpine  # Alpine = version légère (140MB vs 370MB)
+    container_name: customer360_db
+    
+    environment:
+      # CRITICAL: Change ces passwords en prod!
+      POSTGRES_USER: vanel
+      POSTGRES_PASSWORD: 2003
+      POSTGRES_DB: customer360
+      
+      # Performance tuning (important pour gros volumes)
+      # shared_buffers = 25% de RAM dispo (ici 256MB car dev local)
+      # work_mem = mémoire par query (4MB = safe default)
+      POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB -c work_mem=4MB"
+    
+    ports:
+      # 5432 = port standard PostgreSQL
+      # Format: "host_port:container_port"
+      - "5432:5432"
+    
+    volumes:
+      # PERSISTENCE: Sans ça, tu perds tout au restart!
+      # postgres_data = Docker volume (survit aux restarts)
+      - postgres_data:/var/lib/postgresql/data
+      
+      # AUTO-INIT: Tout script SQL dans /docker-entrypoint-initdb.d/
+      # s'exécute automatiquement au premier démarrage
+      - ./sql/init_schemas.sql:/docker-entrypoint-initdb.d/01_init_schemas.sql
+    
+    healthcheck:
+      # Vérifie que Postgres est vraiment prêt (pas juste "started")
+      test: ["CMD-SHELL", "pg_isready -U dataeng"]
+      interval: 10s      # Check toutes les 10s
+      timeout: 5s        # Timeout après 5s
+      retries: 5         # 5 tentatives avant de fail
+    
+    networks:
+      - customer360_network
+
+# VOLUMES: Persistent storage (survit au docker-compose down)
+volumes:
+  postgres_data:
+    driver: local  # Stocké sur ta machine locale
+
+# NETWORKS: Isolation réseau (bonne pratique sécurité)
+networks:
+  customer360_network:
+    driver: bridge
