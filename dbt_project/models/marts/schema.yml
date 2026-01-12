@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "Customer dimension - one row per unique person (golden records)"
+    columns:
+      - name: customer_key
+        description: "Unique identifier for each real person"
+        tests:
+          - not_null
+          - unique
+          
+      - name: email
+        description: "Primary email address"
+        
+      - name: full_name
+        description: "Full name (first + last)"
+        tests:
+          - not_null
+          
+      - name: first_seen_date
+        description: "Date when customer was first seen"
+        tests:
+          - not_null
