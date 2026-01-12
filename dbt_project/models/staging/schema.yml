@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_csv_customers
+    description: "Cleaned customer data"
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          
+      - name: email_clean
+        tests:
+          - unique:
+              where: "email_clean IS NOT NULL"
+          
+      - name: first_name_clean
+        tests:
+          - not_null
+          
+      - name: last_name_clean
+        tests:
+          - not_null
