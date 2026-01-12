@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: int_customer_identity
+    description: "Customer data with identity resolution keys"
+    columns:
+      - name: customer_key
+        description: "Unique key identifying a real person"
+        tests:
+          - not_null
+          
+      - name: is_golden_record
+        description: "TRUE if this is the primary record for this customer"
+        
+  - name: int_customer_deduped
+    description: "Deduplicated customers - one row per person"
+    columns:
+      - name: customer_key
+        description: "Unique customer identifier"
+        tests:
+          - not_null
+          - unique
+          
+      - name: email_clean
+        description: "Primary email for this customer"
