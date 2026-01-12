@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: customer_rfm
+    description: "RFM analysis with customer segmentation"
+    columns:
+      - name: customer_key
+        description: "Unique customer identifier"
+        tests:
+          - not_null
+          - unique
+          
+      - name: rfm_score
+        description: "Concatenated RFM scores (e.g. '555')"
+        tests:
+          - not_null
+          
+      - name: customer_segment
+        description: "Business segment (VIP, At Risk, etc.)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['VIP', 'Champion', 'Loyal', 'At Risk', 'Promising', 'Need Attention', 'Lost', 'New', 'Other']
