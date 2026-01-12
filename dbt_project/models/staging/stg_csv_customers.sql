@@ -55,6 +55,7 @@ cleaned AS (
         city,
         country,
         created_at AS created_at_raw,
+        {{ parse_mixed_dates('created_at') }} AS created_at_parsed,
         loaded_at,
         source_file
         

@@ -20,3 +20,8 @@ models:
       - name: last_name_clean
         tests:
           - not_null
+      - name: created_at_parsed
+        description: "Standardized date (parsed from multiple formats)"
+        tests:
+          - not_null:
+              where: "created_at_raw IS NOT NULL"
